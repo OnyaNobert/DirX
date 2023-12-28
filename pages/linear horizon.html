@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <style type="text/css">
+        canvas{
+            border: 1px solid black;
+        }
+        .cont{display: flex;}
+        .indic{display: flex;
+            flex-direction: column;
+            justify-content: space-between;}
+    </style>
+</head>
+<body>
+    <div class="cont">
+    <canvas id="canvas"></canvas>
+    <div class="indic">
+        <h1 id="black">x</h1>
+        <h1 id="white">+</h1>
+    </div>
+    </div>
+    <script type="text/javascript">
+        var banned=0
+        var locked=0
+        var cccc=document.querySelector('canvas')
+        cccc.height=500
+        cccc.width=500
+        var colorscheme=['#769656','#eeeed2']
+        var can=cccc.getContext('2d')
+        var a=false; var b=true
+        var turn=0
+        var aut1=[]; var aut2=[]
+        var dirs=['?','?']
+        var dir
+        var virtarray=[]
+        var array=[['black', 'black', 'black', 'black', 'black'],
+            ['', '', '', '', ''],
+            ['', '', '', '', ''],
+            ['', '', '', '', ''],
+            ['white', 'white', 'white', 'white', 'white']]
+        function draw(){
+            if(dirs[turn]=='?'){
+                dirs[turn]=prompt('choose direction + or x')
+            }
+            document.getElementById('white').innerHTML=dirs[0]
+            document.getElementById('black').innerHTML=dirs[1]
+            dir=dirs[turn]
+            var col=0
+            for(var j=0; j<5; j++){
+            for(var i=0; i<5; i++){
+                can.fillStyle=colorscheme[col]
+                can.fillRect(i*100,j*100,100,100)
+                if(array[j][i]=='white'){
+                    can.beginPath()
+                    can.arc(50+i*100,50+j*100,40,0,Math.PI*2,false)
+                    can.fillStyle='white'
+                    can.fill()
+                }
+                if(array[j][i]=='black'){
+                    can.beginPath()
+                    can.arc(50+i*100,50+j*100,40,0,Math.PI*2,false)
+                    can.fillStyle='black'
+                    can.fill()
+                }
+                if(col==0){col=1}
+                    else{col=0}
+            }}
+        mima()
+        }
+        
+        function legalise(){
+            var col=Math.abs(aut1[0]-aut2[0]); var row=Math.abs(aut1[1]-aut2[1])
+            var check=array[aut1[0]][aut1[1]]==array[aut2[0]][aut2[1]]
+            if(row+col==2 && row==1 && col==1 && dir=='x' && !check){
+                return true
+            }
+            else if(row+col==1 && dir=='+' && !check){
+                return true
+            }
+            else{alert('illegal move'); aut1=[]; aut2=[]; draw(); locked=0
+             return false}
+        }
+        canvas.addEventListener('click',event=>{
+            var m=Math.floor(event.clientY/100); var n=Math.floor(event.clientX/100)
+            can.fillStyle='rgba(255,0,0,0.5)'
+            can.fillRect(n*100,m*100,100,100)
+            if(array[m][n]=='black' && turn==1 && locked==0){
+                aut1=[m,n];
+            }
+            else if(array[m][n]=='white' && turn==0 && locked==0){
+                aut1=[m,n]
+            }
+            else{banned=1}
+            if(locked==1){
+                aut2=[m,n]
+                if(legalise()){
+                    array[aut1[0]][aut1[1]]=''
+                    if(turn==0){array[aut2[0]][aut2[1]]='white'}
+                        else{array[aut2[0]][aut2[1]]='black'}
+
+                    aut1=[]; aut2=[];
+                     if(dirs[turn]=='+'){dirs[turn]='x'}
+                        else{dirs[turn]='+'}
+                     if(turn==0){turn=1}
+                    else{turn=0};
+                    locked=0
+                    draw()
+                }
+            }
+            else if(banned==0){locked=1}
+            if(banned==1){banned=0; draw()}
+        })
+        var minimax=[]
+        var positions=[]
+        var v1=[]
+        var v2=[]
+        var legalmoves=[]
+        var scores=[]
+        function legal(a,b){
+            var col=Math.abs(a[0]-b[0]); var row=Math.abs(a[1]-b[1])
+            var check=array[a[0]][a[1]]==array[b[0]][b[1]]
+            if(row+col==2 && row==1 && col==1 && dir=='x' && !check){
+                return true
+            }
+            else if(row+col==1 && dir=='+' && !check){
+                return true
+            }
+            else{
+             return false}
+        }
+        function legali(a,b,arr){
+            var col=Math.abs(a[0]-b[0]); var row=Math.abs(a[1]-b[1])
+            var check=arr[a[0]][a[1]]==arr[b[0]][b[1]]
+            if(row+col==2 && row==1 && col==1 && dir=='x' && !check){
+                return true
+            }
+            else if(row+col==1 && dir=='+' && !check){
+                return true
+            }
+            else{
+             return false}
+        }
+        function findlegal(m){
+            legalmoves=[]
+            for(var j=0; j<5; j++){
+                for(var i=0; i<5; i++){
+                    for(var k=0; k<5; k++){
+                for(var l=0; l<5; l++){
+                    var b=[j,i]; var a=[k,l]
+                    if(legal(b,a) && turn==1 && m[b[0]][b[1]]=="black"){
+
+                        
+                        legalmoves[legalmoves.length]=[b,a]
+
+                    }
+                }
+            }
+                }
+            }
+ 
+            
+        }
+        function findlegali(m){
+            legalmoves=[]
+            for(var j=0; j<5; j++){
+                for(var i=0; i<5; i++){
+                    for(var k=0; k<5; k++){
+                for(var l=0; l<5; l++){
+                    var b=[j,i]; var a=[k,l]
+
+                    if(legali(b,a,m) && turn==1 && m[b[0]][b[1]]=="white"){
+
+                        
+                        legalmoves[legalmoves.length]=[b,a]
+
+                    }
+                }
+            }
+                }
+            }
+ 
+            
+        }
+        function alter(a,b,c){
+            c[a[0]][a[1]]=''
+            c[b[0]][b[1]]='black'
+            return c
+
+        }
+        function score(a){
+            var scr=0
+            for(var j=0; j<5; j++){
+                for(var i=0; i<5; i++){
+                    if(a[i][j]=="white"){
+                         var inc=1
+                        inc+=(4-i)/8
+                        scr-=inc
+                    }
+                    else if(a[i][j]=="black"){
+                        var inc=1
+                        inc+=i/10
+                        scr+=inc
+                    }
+                }
+            }
+            return scr
+        }
+        function findlargest(a){
+            var b=-6; var val=0
+            for(var i=0; i<a.length; i++){
+                if(a[i]>b){b=a[i]; val=i}
+            }
+            return val
+        }
+        function findlowest(a){
+            var b=1000; var val=0
+            for(var i=0; i<a.length; i++){
+                if(a[i]<b){b=a[i]; val=i}
+            }
+            return b
+        }
+        function mima(){
+            if(turn==1){
+            v1=[]
+            v2=[]
+            findlegal(array)
+            
+            for(var i=0; i<legalmoves.length; i++){
+                v1[i]=array.slice().map(row => row.slice())
+                
+                v1[i][legalmoves[i][0][0]][legalmoves[i][0][1]]=''
+                v1[i][legalmoves[i][1][0]][legalmoves[i][1][1]]='black'
+                v2[i]=[]
+
+            }
+            for(var j=0; j<v2.length; j++){
+                findlegali(v1[j])
+                for(var i=0; i<legalmoves.length; i++){
+                    v2[j][i]=v1[j].slice().map(row => row.slice())
+
+                    v2[j][i][legalmoves[i][0][0]][legalmoves[i][0][1]]=''
+                    v2[j][i][legalmoves[i][1][0]][legalmoves[i][1][1]]='white'
+                    //console.log(v2[j][i])
+                    
+                }
+            }
+           
+            for(var j=0; j<v1.length; j++){
+                findlegali(v1[j])
+                for(var i=0; i<legalmoves.length; i++){
+                    v2[j][i]=score(v2[j][i])
+                    
+                }
+
+                v1[j]=findlowest(v2[j]);
+                
+                 
+            }
+                var choice=findlargest(v1)
+                console.log(v1[choice])
+                findlegal(array)
+                var p=legalmoves
+                var m1=p[choice][0]
+                var m2=p[choice][1]
+                array[m1[0]][m1[1]]=''
+                    if(turn==0){array[m2[0]][m2[1]]='white'}
+                        else{array[m2[0]][m2[1]]='black'}
+
+                    m1=[]; m2=[];
+                     if(dirs[turn]=='+'){dirs[turn]='x'}
+                        else{dirs[turn]='+'}
+                     if(turn==0){turn=1}
+                    else{turn=0};
+                    locked=0
+                    draw()}
+        }
+        draw()
+    </script>
+</body>
+</html>
