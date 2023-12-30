@@ -36,8 +36,9 @@
         var dirs=['?','?']
         var dir
         var virtarray=[]
+        var t
         var array=[['black', 'black', 'black', 'black', 'black'],
-            ['', '', '', '', ''],
+            ['black', '', '', '', ''],
             ['', '', '', '', ''],
             ['', '', '', '', ''],
             ['white', 'white', 'white', 'white', 'white']]
@@ -69,6 +70,7 @@
                     else{col=0}
             }}
         mima()
+
         }
         
         function legalise(){
@@ -119,13 +121,14 @@
         var v2=[]
         var legalmoves=[]
         var scores=[]
+        var vdir=dir
         function legal(a,b){
             var col=Math.abs(a[0]-b[0]); var row=Math.abs(a[1]-b[1])
             var check=array[a[0]][a[1]]==array[b[0]][b[1]]
-            if(row+col==2 && row==1 && col==1 && dir=='x' && !check){
+            if(row+col==2 && row==1 && col==1 && vdir=='x' && !check){
                 return true
             }
-            else if(row+col==1 && dir=='+' && !check){
+            else if(row+col==1 && vdir=='+' && !check){
                 return true
             }
             else{
@@ -134,10 +137,10 @@
         function legali(a,b,arr){
             var col=Math.abs(a[0]-b[0]); var row=Math.abs(a[1]-b[1])
             var check=arr[a[0]][a[1]]==arr[b[0]][b[1]]
-            if(row+col==2 && row==1 && col==1 && dir=='x' && !check){
+            if(row+col==2 && row==1 && col==1 && vdir=='+' && !check){
                 return true
             }
-            else if(row+col==1 && dir=='+' && !check){
+            else if(row+col==1 && vdir=='x' && !check){
                 return true
             }
             else{
@@ -196,13 +199,16 @@
                 for(var i=0; i<5; i++){
                     if(a[i][j]=="white"){
                          var inc=1
-                        inc+=(4-i)/8
+                         inc+=2/8-Math.abs(2-j)/8
+                        inc+=2/10-Math.abs(2-i)/10
                         scr-=inc
                     }
                     else if(a[i][j]=="black"){
                         var inc=1
-                        inc+=i/10
+                        inc+=2/40-Math.abs(2-j)/40
+                        inc+=(4-i)/40
                         scr+=inc
+                    
                     }
                 }
             }
@@ -223,6 +229,8 @@
             return b
         }
         function mima(){
+            console.log(dirs)
+            vdir=dir
             if(turn==1){
             v1=[]
             v2=[]
@@ -236,6 +244,7 @@
                 v2[i]=[]
 
             }
+            vdir=dirs[1]
             for(var j=0; j<v2.length; j++){
                 findlegali(v1[j])
                 for(var i=0; i<legalmoves.length; i++){
@@ -243,7 +252,7 @@
 
                     v2[j][i][legalmoves[i][0][0]][legalmoves[i][0][1]]=''
                     v2[j][i][legalmoves[i][1][0]][legalmoves[i][1][1]]='white'
-                    //console.log(v2[j][i])
+                    console.log(v2[j][i])
                     
                 }
             }
@@ -259,6 +268,8 @@
                 
                  
             }
+            vdir=dir
+                console.log(v2)
                 var choice=findlargest(v1)
                 console.log(v1[choice])
                 findlegal(array)
