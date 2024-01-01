@@ -38,7 +38,7 @@
         var virtarray=[]
         var t
         var array=[['black', 'black', 'black', 'black', 'black'],
-            ['black', '', '', '', ''],
+            ['', '', '', '', ''],
             ['', '', '', '', ''],
             ['', '', '', '', ''],
             ['white', 'white', 'white', 'white', 'white']]
@@ -206,7 +206,7 @@
                     else if(a[i][j]=="black"){
                         var inc=1
                         inc+=2/40-Math.abs(2-j)/40
-                        inc+=(4-i)/40
+                        inc+=i/10
                         scr+=inc
                     
                     }
