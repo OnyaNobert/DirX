@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <style type="text/css">
+        canvas{
+            border: 1px solid black;
+        }
+        .cont{display: flex;}
+        .indic{display: flex;
+            flex-direction: column;
+            justify-content: space-between;}
+    </style>
+</head>
+<body>
+    <div class="cont">
+    <canvas id="canvas"></canvas>
+    <div class="indic">
+        <h1 id="black">x</h1>
+        <h1 id="white">+</h1>
+    </div>
+    </div>
+    <script src="main.js">
+    </script>
+    <button onclick="aimove()">ai move</button>
+</body>
+</html>
